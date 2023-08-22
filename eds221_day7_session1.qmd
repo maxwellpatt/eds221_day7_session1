@@ -7,4 +7,54 @@ editor: visual
 ```{r}
 library(tidyverse)
 library(palmerpenguins)
+library(datapasta)
+```
+
+### Data wrangling refresher
+
+#1) Starting from penguins, write a single piped sequence in which you:
+
+-   Only include penguins at Dream and Biscoe Islands
+
+-   Remove the year and sex variables
+
+-   Add a new column body_mass_kg with penguin mass converted from g to kg
+
+-   Rename island variable to location
+
+```{r}
+first_wrangle <- penguins %>% 
+  filter(island %in% c("Dream", "Biscoe")) %>% 
+  dplyr::select(-year, -sex) %>% 
+  mutate(body_mass_kg = body_mass_g / 1000) %>% 
+  rename(location = island)
+```
+
+Starting from penguins, write a single piped sequence to:
+
+-   Limit to Adelie penguins
+
+-   Remove any observations where flipper_length_mm is NA (!is.na() or drop_na)
+
+-   Group the data by sex
+
+-   Create a summary table that contains the mean, st dev and sample size of flipper length for male and female Adelie penguins
+
+```{r}
+second_wrangle <- penguins %>% 
+  filter(species == "Adelie") %>% 
+  drop_na(flipper_length_mm) %>% 
+  group_by(sex) %>% 
+  summarize(mean_flipper_length = mean(flipper_length_mm),
+            sd_flipper_length = sd(flipper_length_mm))
+  
+```
+
+```{r}
+penguins %>% 
+  group_by(species, island, sex) %>% 
+  summarize(sample_size = n())
+
+# Count is just wrapping together group_by + summarize + n() to get ocunts of observations
+penguins %>% count(species, island, sex)
 ```
